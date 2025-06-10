@@ -1,0 +1,116 @@
+sequenceDiagram
+    participant Main
+    participant Inicio
+    participant ConexionBD
+    participant MySQL as Base de Datos
+    participant CrearUsuario
+    participant Creditos
+    participant Productos
+
+    Note over Main: Aplicación QuantifyQ - Gestión de Inventario
+    
+    Main->>Inicio: new Inicio().setVisible(true)
+    activate Inicio
+    
+    Note over Inicio: Ventana de Login
+    Inicio->>Inicio: Mostrar campos usuario/contraseña
+    
+    alt Crear Usuario
+        Inicio->>CrearUsuario: new CrearUsuario().setVisible(true)
+        activate CrearUsuario
+        CrearUsuario->>CrearUsuario: Capturar datos (usuario, contraseña)
+        CrearUsuario->>ConexionBD: conectar()
+        activate ConexionBD
+        ConexionBD->>MySQL: DriverManager.getConnection()
+        MySQL-->>ConexionBD: Connection
+        ConexionBD-->>CrearUsuario: Connection
+        deactivate ConexionBD
+        CrearUsuario->>MySQL: INSERT INTO usuarios (username, password)
+        MySQL-->>CrearUsuario: Usuario creado
+        CrearUsuario->>CrearUsuario: dispose()
+        deactivate CrearUsuario
+    end
+    
+    alt Ver Créditos
+        Inicio->>Creditos: new Creditos().setVisible(true)
+        activate Creditos
+        Creditos->>Creditos: Mostrar información de créditos
+        Creditos->>Creditos: dispose() al cerrar
+        deactivate Creditos
+    end
+    
+    alt Iniciar Sesión
+        Inicio->>Inicio: Capturar credenciales
+        Inicio->>ConexionBD: conectar()
+        activate ConexionBD
+        ConexionBD->>MySQL: DriverManager.getConnection()
+        MySQL-->>ConexionBD: Connection
+        ConexionBD-->>Inicio: Connection
+        deactivate ConexionBD
+        Inicio->>MySQL: SELECT * FROM usuarios WHERE username=? AND password=?
+        
+        alt Usuario Válido
+            MySQL-->>Inicio: ResultSet con datos
+            Inicio->>Productos: new Productos().setVisible(true)
+            activate Productos
+            Inicio->>Inicio: dispose()
+            deactivate Inicio
+            
+            Note over Productos: Gestión de Productos
+            
+            alt Ver Productos
+                Productos->>ConexionBD: conectar()
+                activate ConexionBD
+                ConexionBD->>MySQL: Connection
+                ConexionBD-->>Productos: Connection
+                deactivate ConexionBD
+                Productos->>MySQL: SELECT * FROM productos
+                MySQL-->>Productos: ResultSet productos
+                Productos->>Productos: Cargar datos en tabla
+            end
+            
+            alt Crear Producto
+                Productos->>Productos: JOptionPane.showInputDialog() x3
+                Productos->>ConexionBD: conectar()
+                activate ConexionBD
+                ConexionBD-->>Productos: Connection
+                deactivate ConexionBD
+                Productos->>MySQL: INSERT INTO productos (nombre, descripcion, unidades_disponibles)
+                MySQL-->>Productos: Producto creado
+                Productos->>Productos: Mensaje de confirmación
+            end
+            
+            alt Actualizar Producto
+                Productos->>Productos: Obtener fila seleccionada
+                Productos->>Productos: JOptionPane.showInputDialog() con valores actuales
+                Productos->>ConexionBD: conectar()
+                activate ConexionBD
+                ConexionBD-->>Productos: Connection
+                deactivate ConexionBD
+                Productos->>MySQL: UPDATE productos SET nombre=?, descripcion=?, unidades_disponibles=? WHERE id_producto=?
+                MySQL-->>Productos: Producto actualizado
+                Productos->>Productos: Refrescar tabla
+            end
+            
+            alt Eliminar Producto
+                Productos->>Productos: Obtener fila seleccionada
+                Productos->>Productos: JOptionPane.showConfirmDialog()
+                Productos->>ConexionBD: conectar()
+                activate ConexionBD
+                ConexionBD-->>Productos: Connection
+                deactivate ConexionBD
+                Productos->>MySQL: DELETE FROM productos WHERE id_producto=?
+                MySQL-->>Productos: Producto eliminado
+                Productos->>Productos: Refrescar tabla
+            end
+            
+            deactivate Productos
+            
+        else Usuario Inválido
+            MySQL-->>Inicio: ResultSet vacío
+            Inicio->>Inicio: JOptionPane "Usuario no existe"
+        end
+    end
+    
+    Note over MySQL: Base de Datos: quantifyq<br/>Tablas: usuarios, productos
+    Note over ConexionBD: URL: jdbc:mysql://localhost:3306/quantifyq<br/>USER: root<br/>PASS: Colombia01__*

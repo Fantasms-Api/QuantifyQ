@@ -1,0 +1,136 @@
+classDiagram
+    class Main {
+        +main(String[] args) void
+    }
+    
+    class ConexionBD {
+        -URL: String
+        -USER: String
+        -PASS: String
+        +conectar() Connection
+    }
+    
+    class Usuario {
+        -id: int
+        -username: String
+        -password: String
+        +Usuario()
+        +Usuario(int, String, String)
+        +getId() int
+        +setId(int) void
+        +getUsername() String
+        +setUsername(String) void
+        +getPassword() String
+        +setPassword(String) void
+    }
+    
+    class Producto {
+        -id: int
+        -nombre: String
+        -descripcion: String
+        -unidades: int
+        +Producto()
+        +Producto(int, String, String, int)
+        +getId() int
+        +setId(int) void
+        +getNombre() String
+        +setNombre(String) void
+        +getDescripcion() String
+        +setDescripcion(String) void
+        +getUnidades() int
+        +setUnidades(int) void
+    }
+    
+    class Inicio {
+        -btnIniciarSesion: JButton
+        -jButton1: JButton
+        -jButton3: JButton
+        -jButton4: JButton
+        -txtUsuario: JTextField
+        -txtContrasena: JPasswordField
+        -jLabel1: JLabel
+        -jLabel2: JLabel
+        -jLabel3: JLabel
+        -jLabel4: JLabel
+        +Inicio()
+        -initComponents() void
+        -jButton1ActionPerformed(ActionEvent) void
+        -btnIniciarSesionActionPerformed(ActionEvent) void
+        -jButton3ActionPerformed(ActionEvent) void
+        -jButton4ActionPerformed(ActionEvent) void
+        +main(String[] args) void
+    }
+    
+    class CrearUsuario {
+        -txtNuevoUsuario: JTextField
+        -txtNuevaContrasena: JPasswordField
+        -btnGuardarUsuario: JButton
+        -jLabel1: JLabel
+        -jLabel2: JLabel
+        -jLabel3: JLabel
+        -jLabel5: JLabel
+        +CrearUsuario()
+        -initComponents() void
+        -btnGuardarUsuarioActionPerformed(ActionEvent) void
+        +main(String[] args) void
+    }
+    
+    class Creditos {
+        -btnCerrarCreditos: JButton
+        -jLabel1: JLabel
+        -jLabel2: JLabel
+        -jLabel3: JLabel
+        -jLabel4: JLabel
+        +Creditos()
+        -initComponents() void
+        -btnCerrarCreditosActionPerformed(ActionEvent) void
+        +main(String[] args) void
+    }
+    
+    class Productos {
+        -tablaProductos: JTable
+        -btnVerProductos: JButton
+        -btnCrearProducto: JButton
+        -btnActualizarProducto: JButton
+        -btnEliminarProducto: JButton
+        -jLabel1: JLabel
+        -jLabel3: JLabel
+        -jScrollPane1: JScrollPane
+        +Productos()
+        -initComponents() void
+        -btnVerProductosActionPerformed(ActionEvent) void
+        -btnCrearProductoActionPerformed(ActionEvent) void
+        -btnActualizarProductoActionPerformed(ActionEvent) void
+        -btnEliminarProductoActionPerformed(ActionEvent) void
+        +main(String[] args) void
+    }
+    
+    %% Relaciones
+    Main --> Inicio : "instancia"
+    Inicio --> ConexionBD : "usa"
+    Inicio --> CrearUsuario : "abre ventana"
+    Inicio --> Creditos : "abre ventana"
+    Inicio --> Productos : "navega a"
+    CrearUsuario --> ConexionBD : "usa"
+    Productos --> ConexionBD : "usa"
+    
+    %% Herencia de JFrame
+    Inicio --|> JFrame
+    CrearUsuario --|> JFrame
+    Creditos --|> JFrame
+    Productos --|> JFrame
+    
+    %% Paquetes
+    class JFrame {
+        <<external>>
+    }
+    
+    %% Notas sobre paquetes
+    note for Main "Paquete: main"
+    note for ConexionBD "Paquete: db"
+    note for Usuario "Paquete: models"
+    note for Producto "Paquete: models"
+    note for Inicio "Paquete: views"
+    note for CrearUsuario "Paquete: views"
+    note for Creditos "Paquete: views"
+    note for Productos "Paquete: views"
